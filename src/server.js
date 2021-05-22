@@ -27,9 +27,39 @@ app.use(express.json()); // To parse the incoming requests with JSON payloads
 
 // additional init stuff should go before hitting the routing
 
+const lists = [];
+const workLists = [];
+
 // default index route
 app.get('/', (req, res) => {
-  res.send('hi');
+  const today = new Date();
+  const options = {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  };
+  const day = today.toLocaleDateString('en-US', options);
+  res.render('list', { title: day, lists });
+});
+
+app.post('/', (req, res) => {
+  const list = req.body.todo;
+  lists.push(list);
+  res.redirect('/');
+});
+
+app.get('/work', (req, res) => {
+  res.render('list', { title: 'Work', lists: workLists });
+});
+
+app.post('/work', (req, res) => {
+  const item = req.body.todo;
+  workLists.push(item);
+  res.redirect('/work');
+});
+
+app.get('/about', (req, res) => {
+  res.render('about');
 });
 
 // START THE SERVER
